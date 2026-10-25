@@ -1,0 +1,1049 @@
+# MASTER DEVELOPMENT PROMPT: EDUCATION OPERATION MANAGEMENT SYSTEM (EOMS)
+
+## 1. ROLE AND OBJECTIVE
+
+Act as a senior full-stack developer, product designer, UX architect, and software engineer. Build a complete, professional, responsive web application named **EOMS — Education Operation Management System**.
+
+This is a real educational administration platform, not a static UI concept, a landing-page-only design, or a collection of disconnected dashboard mockups.
+
+The application must provide a complete user journey:
+
+Landing Page → Login / Registration → Role Verification → Appropriate Dashboard → Functional Modules → Logout.
+
+Build on the existing project if source code is already present. Inspect the current files, package.json, dependencies, routing, and existing components before making changes. Preserve useful existing functionality. Do not unnecessarily replace the project or introduce incompatible dependencies.
+
+Do not merely explain what needs to be built. Implement the application, create the necessary components, connect the navigation, and fix errors.
+
+## 2. PRODUCT PURPOSE
+
+EOMS helps educational institutions manage academic and administrative operations from one centralized platform.
+
+The system supports three roles:
+
+1. Administrator
+2. Teacher
+3. Student
+
+The application must provide role-based dashboards and permissions. Each role must see relevant information, navigation items, and permitted actions.
+
+Core modules:
+
+- Student management
+- Teacher management
+- Course management
+- Class and enrollment management
+- Attendance
+- Assignments
+- Examinations and marks
+- Results
+- Academic reports
+- Notifications
+- User profile and account settings
+
+Keep the first release practical and achievable. Implement the complete essential user journey before adding advanced features.
+
+## 3. DESIGN DIRECTION: WARM, MINIMAL, HUMAN-MADE
+
+Use the provided ChronoTask dashboard screenshot as the primary color and visual-design reference.
+
+The design should feel like a carefully designed productivity application for a real educational institution. It should be clean, restrained, confident, and practical.
+
+Avoid the generic appearance associated with automatically generated SaaS dashboards.
+
+Do not copy the reference screenshot literally. Adapt its visual characteristics to the educational-management use case.
+
+### Color tokens
+
+Create reusable CSS variables or theme tokens:
+
+--app-background: #F9F9F8;
+--surface: #FFFFFF;
+--surface-subtle: #F3F3F1;
+--primary: #F9A51B;
+--primary-hover: #E58E08;
+--primary-soft: #FAC95A;
+--primary-tint: #FFF2D7;
+--text-primary: #131313;
+--text-secondary: #62676B;
+--text-muted: #919A9F;
+--border: #DBDBD9;
+--success: #23845B;
+--success-soft: #E6F4EC;
+--warning: #A66A00;
+--warning-soft: #FFF3D6;
+--danger: #C44940;
+--danger-soft: #FCEBE9;
+
+Use #F9A51B as the main accent and CTA color. Use #FAC95A sparingly for progress indicators and softer highlights.
+
+The main background should be warm off-white. Cards should be white with subtle borders. Text should be nearly black.
+
+Do not introduce unrelated purple, neon gradients, excessive blue, or multicolor gradients. Status colors may be used where they communicate real meaning.
+
+### Typography
+
+Use **Inter** as the primary font, with a system sans-serif fallback.
+
+Use consistent font weights:
+
+- 400 for body text
+- 500 for labels and navigation
+- 600 for section headings and card titles
+- 700 for major page headings
+
+Use a comfortable type scale and readable line heights. Headings must have a clear hierarchy without being oversized.
+
+Use tabular numerals for attendance percentages, counts, marks, and other numeric dashboard metrics where appropriate.
+
+### Layout and spacing
+
+Use an 8px-based spacing system.
+
+- Main content max width: approximately 1440px.
+- Desktop sidebar: approximately 240px wide.
+- Top navigation: approximately 64–72px high.
+- Card radius: 10–14px.
+- Buttons: 9–11px radius.
+- Inputs: 9–11px radius.
+- Main card padding: 20–24px.
+- Section spacing: 24–32px.
+
+Use thin borders and subtle shadows only when necessary. Avoid excessive shadows, floating decorative circles, glassmorphism, and oversized rounded containers.
+
+The overall visual style must be consistent across the landing page, authentication pages, and dashboards.
+
+## 4. LOGO AND BRAND IDENTITY
+
+Product name: EOMS.
+
+Full name: Education Operation Management System.
+
+Create a simple, original logo using a graduation-cap or open-book symbol combined with a restrained geometric mark.
+
+The logo should work in the landing-page header, sidebar, authentication panel, favicon, and mobile layout.
+
+Use a simple icon from Lucide React or an original SVG. Do not use emoji as the logo. Do not depend on externally hosted logo images.
+
+Create a clean wordmark with EOMS and an optional small subtitle, “Education Management”.
+
+Do not create a fake university logo or imply affiliation with an actual institution.
+
+## 5. REQUIRED APPLICATION ROUTES
+
+Create these routes using a suitable routing library, preferably React Router if compatible with the existing project.
+
+Public routes:
+
+- /
+- /login
+- /register
+- /forgot-password
+
+Application routes:
+
+- /app
+- /app/dashboard
+- /app/students
+- /app/teachers
+- /app/courses
+- /app/classes
+- /app/attendance
+- /app/assignments
+- /app/examinations
+- /app/results
+- /app/reports
+- /app/notifications
+- /app/profile
+- /app/settings
+
+Use role-based access guards.
+
+Students must not be able to access administrator-only pages by manually typing URLs. Teachers must not gain administrator privileges by editing client-side state.
+
+Redirect unauthenticated users to /login. After successful login, route users to their correct role-specific dashboard.
+
+Create a proper not-found page and a useful unauthorized-access state.
+
+## 6. LANDING PAGE
+
+Build a polished public-facing landing page that explains the product and encourages visitors to sign in or register.
+
+### A. Header
+
+Create a clean, responsive navigation bar.
+
+Left:
+- EOMS logo and wordmark.
+
+Center or right:
+- Features
+- Modules
+- How It Works
+- About
+
+Actions:
+- Sign In
+- Get Started
+
+Use a white or warm off-white background, a subtle bottom border, and a sticky header only if it improves navigation.
+
+The Get Started button should use the primary orange.
+
+On mobile, collapse navigation into a functional menu.
+
+### B. Hero section
+
+Use a two-column desktop layout.
+
+Left side:
+
+Small eyebrow:
+“ONE PLATFORM. BETTER EDUCATION.”
+
+Main heading:
+“Less administration. More education.”
+
+Supporting text:
+“Manage students, courses, attendance, assessments, and academic records from one organized workspace built for your institution.”
+
+Primary CTA:
+“Get Started”
+
+Secondary CTA:
+“Explore Features”
+
+Add a small trust-oriented note such as:
+“Designed for administrators, teachers, and students.”
+
+Right side:
+
+Create an authentic product preview of the EOMS dashboard using actual application UI components, not an unrelated stock photograph.
+
+Show a compact dashboard preview with:
+- Total students
+- Active courses
+- Attendance overview
+- Recent academic activity
+
+The preview must use the same colors, typography, spacing, and components as the real application.
+
+Use realistic sample values and clearly treat them as demonstration data.
+
+Do not invent real customer logos, testimonials, institutional partnerships, or unsupported claims about how many schools use the product.
+
+### C. Features section
+
+Heading:
+“Everything your institution needs, in one place.”
+
+Create six feature items:
+
+1. Student Records
+   Manage student profiles, enrollment details, and academic information.
+
+2. Attendance Management
+   Record and review daily attendance with class-level summaries.
+
+3. Course Management
+   Organize courses, classes, subjects, and teaching assignments.
+
+4. Assignments and Examinations
+   Publish assignments, manage assessments, and record marks.
+
+5. Academic Reports
+   Review attendance, performance, enrollment, and result summaries.
+
+6. Role-Based Workspaces
+   Give administrators, teachers, and students relevant access to their own tools.
+
+Use consistent icons, short descriptions, and restrained card styling. Avoid giving every feature a different bright background.
+
+### D. How it works
+
+Present three straightforward steps:
+
+1. Create or receive an account.
+2. Access your role-specific workspace.
+3. Manage academic activities from one place.
+
+Use a simple horizontal process layout on desktop and a vertical layout on mobile.
+
+### E. Role-based benefits
+
+Create three clearly differentiated sections or cards.
+
+Administrator:
+“Keep institution-wide operations organized.”
+
+Teacher:
+“Spend less time managing records and more time supporting students.”
+
+Student:
+“Stay informed about courses, attendance, assignments, and results.”
+
+Provide a short list of each role's primary capabilities.
+
+### F. Final CTA
+
+Heading:
+“Bring your academic operations together.”
+
+Text:
+“Start with a clearer, more organized way to manage everyday academic work.”
+
+Button:
+“Access EOMS”
+
+Route the button to registration or login, as appropriate.
+
+### G. Footer
+
+Include:
+- EOMS brand
+- Short product description
+- Product navigation
+- Login and registration links
+- Privacy Policy
+- Terms of Service
+- Current year generated dynamically
+
+Do not add fake social media links or unsupported institutional contact information.
+
+## 7. LOGIN PAGE
+
+Build a dedicated login page at /login.
+
+Use a two-panel desktop layout inspired by the reference images, but adapt it to the warm orange theme.
+
+Left panel:
+- EOMS brand.
+- Short heading: “A clearer way to manage education.”
+- Brief product description.
+- A restrained illustration or miniature dashboard preview.
+
+Right panel:
+- Heading: “Welcome back”
+- Subtitle: “Sign in to continue to your workspace.”
+- Email field.
+- Password field with show/hide toggle.
+- Remember-me checkbox.
+- Forgot-password link.
+- Sign In button.
+- Link to registration.
+
+Add accessible labels, field validation, loading states, and inline error messages.
+
+The login form must actually authenticate against the configured authentication provider.
+
+Never pretend that a login succeeded if the backend rejected the credentials.
+
+Do not display password values in logs, URLs, notifications, or error messages.
+
+Support Enter-key submission and sensible keyboard navigation.
+
+Do not add Google or Microsoft authentication buttons unless the corresponding OAuth providers have actually been configured. Do not present decorative buttons as working integrations.
+
+On smaller screens, remove the oversized decorative panel and prioritize the login form.
+
+## 8. REGISTRATION PAGE
+
+Build /register with a complete, validated registration form.
+
+Fields:
+
+- Full name
+- Email address
+- Password
+- Confirm password
+- Account role, when permitted by the registration policy
+- Terms acceptance checkbox
+
+Include:
+- Password visibility toggle.
+- Password strength guidance.
+- Required-field validation.
+- Valid email format checking.
+- Password confirmation validation.
+- Duplicate-email handling.
+- Submission loading state.
+- Clear success and failure messages.
+- Link to existing-account login.
+
+### Critical role-security rule
+
+Public registration must never allow someone to grant themselves administrator privileges.
+
+Implement the following policy:
+
+- Public users may register as students, subject to the institution's account policy.
+- Teacher accounts must be approved, invited, or provisioned by an administrator.
+- Administrator accounts must be created through a protected setup or server-side administrative process.
+- Never trust a role submitted directly by a browser.
+- Never let a user elevate their own role by modifying local storage, request payloads, or client-side state.
+
+If the product supports invitation codes, validate those codes on the server.
+
+After successful registration, show a confirmation state and route the user appropriately. If email verification is enabled, explain that the account must be verified before access is granted.
+
+## 9. AUTHENTICATION AND BACKEND
+
+Use a real backend, not a frontend-only simulation.
+
+Preferred stack, provided it is compatible with the existing project:
+
+Frontend:
+- React
+- TypeScript
+- Vite
+- React Router
+- Tailwind CSS or the existing styling system
+- Lucide React for icons
+- Recharts for charts, if needed
+
+Backend:
+- Node.js
+- Express
+- TypeScript or the existing server setup
+- MongoDB with Mongoose, if MongoDB is already selected
+
+Alternatively, if the project already uses Supabase, use Supabase Auth and PostgreSQL rather than introducing an unnecessary second backend.
+
+Do not mix incompatible authentication systems or add dependencies without checking the existing package configuration.
+
+### Required authentication behavior
+
+Implement:
+
+- Account registration.
+- Login.
+- Logout.
+- Session persistence.
+- Protected routes.
+- Role-based authorization.
+- Current-user retrieval.
+- Password reset flow.
+- Appropriate loading and error states.
+
+Use secure, HTTP-only cookies for a custom backend session where practical. If using JWTs, use a secure, carefully designed token lifecycle and never expose secret signing keys to the frontend.
+
+Store passwords only as strong salted password hashes using a suitable password-hashing library such as Argon2 or bcrypt.
+
+Never store plaintext passwords.
+
+Validate input on both client and server.
+
+Use environment variables for credentials, database connection strings, and secrets.
+
+Create a .env.example file containing placeholder values only.
+
+Do not place secrets in VITE_ environment variables or commit actual .env files.
+
+Configure CORS, rate limiting for authentication endpoints, and appropriate security headers.
+
+Do not claim production security merely because a login form has been created.
+
+## 10. ADMINISTRATOR DASHBOARD
+
+Route: /app/dashboard when the authenticated user's role is administrator.
+
+### Application shell
+
+Create:
+- Persistent left sidebar.
+- Top header.
+- Breadcrumbs.
+- Global search.
+- Notification indicator.
+- Profile menu.
+- Main content area.
+
+Sidebar navigation:
+
+- Dashboard
+- Students
+- Teachers
+- Courses
+- Classes
+- Attendance
+- Assignments
+- Examinations
+- Results
+- Reports
+- Settings
+
+Include active-route styling and collapsible navigation if useful.
+
+Use white surfaces, the #F9F9F8 background, orange active states, subtle borders, and clear typography.
+
+### Dashboard overview
+
+Greeting:
+“Good morning, [First Name]”
+
+Subtitle:
+“Here is an overview of your institution.”
+
+Metric cards:
+- Total Students
+- Total Teachers
+- Active Courses
+- Pending Approvals
+
+Each card should contain:
+- A concise label.
+- A meaningful icon.
+- A realistic value.
+- Optional comparison or status indicator only when the underlying data supports it.
+
+Do not display invented percentage growth as if it were real analytics. If the application is using seed data, label it as demo data.
+
+### Charts
+
+Include:
+- Student enrollment trend.
+- Attendance overview.
+- Academic performance summary, if data exists.
+
+Use Recharts only if compatible with the project.
+
+Charts need meaningful titles, readable axes, useful tooltips, responsive sizing, and empty states.
+
+### Recent activity
+
+Display a compact list of recent events, such as:
+- Student registered.
+- Attendance submitted.
+- Assignment published.
+- Examination marks updated.
+
+Use actual backend data when available. Otherwise, label the content as sample activity.
+
+### Quick actions
+
+Provide functional shortcuts:
+- Add Student
+- Add Teacher
+- Create Course
+- View Reports
+
+Every action must navigate to a relevant page or open a functional form.
+
+## 11. STUDENT DASHBOARD
+
+Route: /app/dashboard for student accounts.
+
+Greeting:
+“Welcome back, [First Name]”
+
+Display:
+- Enrolled courses.
+- Attendance percentage.
+- Pending assignments.
+- Upcoming examinations.
+- Latest results.
+- Recent notifications.
+
+Create a course overview showing course title, teacher, progress where available, and a link to course details.
+
+Create a recent activity list.
+
+Show a clear attendance summary and assignment deadlines.
+
+The student must only be able to view their own records and records explicitly shared with them.
+
+Do not expose other students' private profiles, marks, email addresses, or attendance records.
+
+Create useful empty states when the student has not enrolled in any courses or has no upcoming assessments.
+
+## 12. TEACHER DASHBOARD
+
+Route: /app/dashboard for teacher accounts.
+
+Greeting:
+“Welcome back, [First Name]”
+
+Display:
+- Assigned classes.
+- Total students in assigned classes.
+- Pending assignments to review.
+- Upcoming examinations.
+- Attendance summary.
+
+Create a class overview table with:
+- Class name.
+- Subject.
+- Student count.
+- Attendance summary.
+- Action.
+
+Quick actions:
+- Mark Attendance
+- Create Assignment
+- Enter Examination Marks
+- View Class Results
+
+Teachers may manage only their assigned classes, students, and academic records according to server-enforced permissions.
+
+Include clear success and error messages after saving changes.
+
+## 13. FUNCTIONAL MODULES
+
+Implement usable pages for each module. Do not create navigation links that lead to blank screens.
+
+### Students
+
+- Search students.
+- Filter by class or enrollment status.
+- Paginated student table.
+- View student profile.
+- Add and edit records, where authorized.
+- Validate required fields.
+- Confirm destructive actions.
+
+### Teachers
+
+- Search and filter teachers.
+- View teacher profiles.
+- Assign subjects and classes.
+- Add and edit teacher records, where authorized.
+
+### Courses and classes
+
+- Create and edit courses.
+- Assign teachers.
+- Define class groups and subjects.
+- Enroll students.
+- View course and enrollment details.
+
+### Attendance
+
+- Select a class and date.
+- Display eligible students.
+- Mark present, absent, or late.
+- Save attendance.
+- Prevent duplicate records for the same student, class, and date unless an authorized correction is performed.
+- Show attendance summaries and history.
+
+### Assignments
+
+- Create assignments with title, instructions, class, and due date.
+- Display upcoming and overdue assignments.
+- Allow teachers to review submissions if submission functionality is implemented.
+- Show students their own assignment status.
+
+### Examinations and results
+
+- Create examination records.
+- Enter marks and maximum marks.
+- Validate mark ranges.
+- Calculate grades using a clearly defined grading policy.
+- Publish or withhold results according to permissions.
+- Allow students to see only their own published results.
+
+### Reports
+
+Provide useful summaries for:
+- Enrollment.
+- Attendance.
+- Course participation.
+- Examination performance.
+
+Do not show misleading analytics when records are unavailable.
+
+### Notifications
+
+Implement a notification list with read/unread state.
+
+Use real events or clearly labeled demo records. Do not claim that email or push notifications are delivered unless that integration exists.
+
+### Profile and settings
+
+Provide profile editing, account preferences, and password-change flows appropriate to the chosen authentication system.
+
+## 14. DATABASE DESIGN
+
+Design a normalized and maintainable data model.
+
+Suggested entities:
+
+User:
+- id
+- fullName
+- email
+- passwordHash, only if custom authentication is used
+- role
+- accountStatus
+- createdAt
+- updatedAt
+
+Student:
+- id
+- userId
+- studentNumber
+- classId
+- enrollmentStatus
+
+Teacher:
+- id
+- userId
+- employeeNumber
+- assignedSubjects
+
+Course:
+- id
+- title
+- courseCode
+- description
+- teacherIds
+- status
+
+Class:
+- id
+- name
+- academicYear
+- courseIds
+
+Enrollment:
+- id
+- studentId
+- courseId
+- enrolledAt
+- status
+
+Attendance:
+- id
+- studentId
+- classId
+- date
+- status
+- markedBy
+
+Assignment:
+- id
+- title
+- instructions
+- classId
+- createdBy
+- dueDate
+- status
+
+Examination:
+- id
+- title
+- classId
+- maximumMarks
+- examDate
+- status
+
+Result:
+- id
+- studentId
+- examinationId
+- marksObtained
+- publishedAt
+
+Notification:
+- id
+- userId
+- title
+- message
+- readAt
+- createdAt
+
+Adapt the schema to the actual database and project conventions.
+
+Use database constraints and indexes where appropriate. Ensure email uniqueness, referential integrity, and appropriate uniqueness for attendance and enrollment records.
+
+Never return password hashes or secret authentication fields through ordinary API responses.
+
+## 15. API DESIGN
+
+Create a clear REST API with consistent response structures.
+
+Example endpoints:
+
+Authentication:
+- POST /api/auth/register
+- POST /api/auth/login
+- POST /api/auth/logout
+- GET /api/auth/me
+- POST /api/auth/forgot-password
+- POST /api/auth/reset-password
+
+Students:
+- GET /api/students
+- GET /api/students/:id
+- POST /api/students
+- PATCH /api/students/:id
+- DELETE /api/students/:id
+
+Teachers:
+- GET /api/teachers
+- POST /api/teachers
+- PATCH /api/teachers/:id
+
+Courses:
+- GET /api/courses
+- POST /api/courses
+- PATCH /api/courses/:id
+
+Attendance:
+- GET /api/attendance
+- POST /api/attendance
+- PATCH /api/attendance/:id
+
+Assignments:
+- GET /api/assignments
+- POST /api/assignments
+- PATCH /api/assignments/:id
+
+Examinations and results:
+- GET /api/examinations
+- POST /api/examinations
+- GET /api/results
+- POST /api/results
+- PATCH /api/results/:id
+
+Use server-side authorization middleware, input validation, consistent HTTP status codes, pagination, and clear errors.
+
+Apply permissions individually to sensitive records. An authenticated user must not automatically be allowed to access every record.
+
+If a module is not implemented yet, do not present its endpoint as functional.
+
+## 16. REALISTIC DATA AND DEMO MODE
+
+The UI must work before the institution has populated every module.
+
+Provide a clearly identified demo-data mode or development seed script.
+
+Use believable sample values for student counts, courses, attendance, assignments, and recent activity.
+
+Never use fabricated data as a representation of live institutional records.
+
+When no data exists, show meaningful empty states with a useful action such as “Add your first student”.
+
+Avoid random numbers changing on every render.
+
+Use consistent sample records and realistic names.
+
+If a demo administrator account is needed for local development, create it through a documented, server-side seed script using environment-provided credentials. Never hardcode a universal production password.
+
+Clearly separate demonstration accounts and records from real users.
+
+## 17. RESPONSIVE DESIGN
+
+Desktop:
+- Persistent sidebar.
+- Multi-column metric cards.
+- Charts and tables with comfortable spacing.
+
+Tablet:
+- Collapsible sidebar.
+- Two-column layouts where appropriate.
+- Scrollable tables when required.
+
+Mobile:
+- Compact header.
+- Drawer navigation or a well-designed mobile navigation bar.
+- Single-column cards.
+- Touch-friendly controls.
+- Forms that fit the screen.
+- Tables converted into compact cards where this improves usability.
+- No horizontal page overflow.
+- No tiny text or controls that are difficult to tap.
+
+The login and registration pages must be fully responsive.
+
+Maintain consistent visual hierarchy at every breakpoint.
+
+## 18. INTERACTION AND ACCESSIBILITY
+
+Every visible control must have a real purpose.
+
+Implement:
+- Search and filters.
+- Pagination.
+- Form validation.
+- Confirmation dialogs.
+- Dropdown menus.
+- Password visibility toggles.
+- Toasts or inline notifications.
+- Loading states.
+- Empty states.
+- Error states.
+- Retry actions where appropriate.
+
+Accessibility requirements:
+- Semantic HTML.
+- Associated labels for inputs.
+- Keyboard-accessible menus and dialogs.
+- Visible focus indicators.
+- Sufficient color contrast.
+- Accessible names for icon-only buttons.
+- Proper heading order.
+- Reduced-motion support.
+
+Use animation sparingly. Short transitions for hover, focus, navigation, and opening menus are enough. Respect the user's reduced-motion preference.
+
+## 19. NATURAL, PROFESSIONAL DESIGN RULES
+
+The website must not look like an automatically generated template.
+
+Follow these rules:
+
+- Use restrained colors and consistent spacing.
+- Avoid gradients on every section.
+- Avoid giant headings that consume the entire viewport.
+- Avoid excessive floating icons and decorative circles.
+- Avoid repeated identical cards with long generic descriptions.
+- Avoid fake testimonials, fake logos, fake user counts, and invented awards.
+- Avoid unnecessary animations.
+- Avoid excessive pill-shaped elements.
+- Avoid random illustrations unrelated to education.
+- Avoid emoji as interface icons.
+- Avoid generic marketing language such as “revolutionizing the future with cutting-edge innovation”.
+- Use concise, natural copy that explains actual product capabilities.
+- Prioritize information hierarchy, readable typography, and practical interactions.
+- Use realistic dashboard information density.
+- Maintain a consistent grid and alignment.
+- Use whitespace intentionally, not as a substitute for content.
+
+The final design should resemble a thoughtfully designed, real-world education management product.
+
+## 20. CODE QUALITY AND PROJECT STRUCTURE
+
+Organize the application into reusable components.
+
+Suggested structure:
+
+src/
+  app/
+    router.tsx
+    providers.tsx
+  components/
+    layout/
+    navigation/
+    forms/
+    tables/
+    charts/
+    feedback/
+  pages/
+    LandingPage.tsx
+    LoginPage.tsx
+    RegisterPage.tsx
+    ForgotPasswordPage.tsx
+    DashboardPage.tsx
+    StudentsPage.tsx
+    TeachersPage.tsx
+    CoursesPage.tsx
+    AttendancePage.tsx
+    AssignmentsPage.tsx
+    ExaminationsPage.tsx
+    ResultsPage.tsx
+    ReportsPage.tsx
+    ProfilePage.tsx
+    SettingsPage.tsx
+  features/
+    auth/
+    students/
+    teachers/
+    courses/
+    attendance/
+    assignments/
+    results/
+  services/
+    api.ts
+    auth.ts
+  hooks/
+  types/
+  styles/
+
+Adapt this structure to the existing project rather than forcing an unnecessary rewrite.
+
+Use TypeScript types for domain models and API responses.
+
+Avoid oversized monolithic components, duplicated layouts, excessive useEffect hooks, and unnecessary dependencies.
+
+Do not use placeholder links such as href="#" for actual navigation.
+
+Do not leave console errors, missing imports, unresolved components, or nonfunctional buttons.
+
+## 21. TESTING AND VALIDATION
+
+Before declaring the implementation complete:
+
+1. Install or reconcile dependencies without introducing conflicting package versions.
+2. Run the production build.
+3. Resolve TypeScript and build errors.
+4. Test all public routes.
+5. Test login and registration validation.
+6. Test authentication persistence and logout.
+7. Test role-based redirection.
+8. Test unauthorized access to restricted pages.
+9. Test all sidebar navigation links.
+10. Test forms, search, filters, and primary actions.
+11. Test responsive layouts.
+12. Test empty, loading, and error states.
+13. Check browser console errors.
+14. Confirm that secrets are not included in client bundles.
+15. Verify the application can start using the documented commands.
+
+If a real backend or OAuth provider is not configured, state exactly what remains unconfigured. Do not simulate a successful real authentication flow without clearly identifying it as a development demo.
+
+## 22. REQUIRED DELIVERABLES
+
+Deliver the working application, not just a design description.
+
+Include:
+
+- Landing page.
+- Login page.
+- Registration page.
+- Password recovery interface.
+- Three role-specific dashboards.
+- Reusable application shell.
+- Functional core management modules.
+- Database schema or models.
+- Authentication and authorization implementation.
+- REST API where appropriate.
+- Seed/demo-data setup.
+- Responsive styling.
+- .env.example.
+- README with installation and development instructions.
+- Backend and frontend setup commands.
+- Deployment instructions for the selected stack.
+- A list of any remaining limitations or integrations that require configuration.
+
+## 23. IMPLEMENTATION PRIORITY
+
+Build in this order:
+
+Phase 1: Inspect the project and establish a stable, compatible architecture.
+
+Phase 2: Implement the theme, typography, reusable components, and landing page.
+
+Phase 3: Implement login, registration, authentication, and role-based route protection.
+
+Phase 4: Implement the shared application shell and three role-specific dashboards.
+
+Phase 5: Implement students, teachers, courses, attendance, assignments, examinations, and results.
+
+Phase 6: Connect the backend, database, validation, and authorization.
+
+Phase 7: Implement reports, notifications, profile, and settings.
+
+Phase 8: Test, fix build errors, verify responsiveness, and document deployment.
+
+Prioritize a working end-to-end experience over superficial feature completeness.
+
+## FINAL INSTRUCTION
+
+Start by inspecting the existing project and identifying its current framework, dependencies, routing, and backend.
+
+Then implement the application using the existing compatible stack.
+
+Use the supplied orange ChronoTask reference for the color palette and visual direction, and the supplied EOMS references for the educational-management features.
+
+The result must be a cohesive, production-minded education management application with a polished public landing page, working authentication flow, secure role-based access, and functional dashboards for administrators, teachers, and students.
+
+Do not stop after generating the landing page or a static dashboard. Continue until the primary application flow works end to end.

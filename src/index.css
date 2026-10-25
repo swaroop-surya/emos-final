@@ -1,0 +1,53 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --app-background: #F9F9F8;
+    --surface: #FFFFFF;
+    --surface-subtle: #F3F3F1;
+    --primary: #F9A51B;
+    --primary-hover: #E58E08;
+    --primary-soft: #FAC95A;
+    --primary-tint: #FFF2D7;
+    --text-primary: #131313;
+    --text-secondary: #62676B;
+    --text-muted: #919A9F;
+    --border: #DBDBD9;
+    --success: #23845B;
+    --success-soft: #E6F4EC;
+    --warning: #A66A00;
+    --warning-soft: #FFF3D6;
+    --danger: #C44940;
+    --danger-soft: #FCEBE9;
+  }
+
+  body {
+    background-color: var(--app-background);
+    color: var(--text-primary);
+    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    margin: 0;
+    padding: 0;
+  }
+}
+
+/* Tabular numbers for clean stats and metrics */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Custom scrollbar for clean dashboard tables & navigation */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #d4d4d2;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a4;
+}
