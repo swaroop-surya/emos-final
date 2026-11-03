@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { Logo } from '../components/common/Logo';
 import { CenteredPopup } from '../components/common/CenteredPopup';
+import { UserRole } from '../types';
 import {
   User,
   Mail,
@@ -16,17 +17,21 @@ import {
   ShieldCheck,
   Sparkles,
   KeyRound,
+  GraduationCap,
+  BookOpen,
 } from 'lucide-react';
 
 export const RegisterPage: React.FC = () => {
   const { register } = useAuth();
   const navigate = useNavigate();
 
+  const [selectedRole, setSelectedRole] = useState<UserRole>('student');
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [agreeTerms, setAgreeTerms] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -146,8 +151,9 @@ export const RegisterPage: React.FC = () => {
     setPassword(securePass);
     setConfirmPassword(securePass);
     setShowPassword(true); // reveals text for safety
+    setShowConfirmPassword(true); // reveals confirmation text for safety
     setError(null);
-    setPasswordNotice('Secure high-entropy password generated and applied!');
+    setPasswordNotice('Secure high-entropy password generated and applied to both fields!');
     setTimeout(() => setPasswordNotice(null), 4000);
   };
 
@@ -172,13 +178,13 @@ export const RegisterPage: React.FC = () => {
       return;
     }
     if (!agreeTerms) {
-      setError('Please accept the Institutional Terms and Student Policy.');
+      setError('Please accept the Institutional Terms and Policy.');
       return;
     }
 
     setIsLoading(true);
     // AutoLogin is false for post-registration transition to login
-    const res = await register(fullName, email, password, 'student', false);
+    const res = await register(fullName, email, password, selectedRole, false);
     setIsLoading(false);
 
     if (res.success) {
@@ -199,6 +205,18 @@ export const RegisterPage: React.FC = () => {
     });
   };
 
+  const getRoleDisplayName = (r: UserRole) => {
+    switch (r) {
+      case 'admin':
+        return 'Administrator';
+      case 'teacher':
+        return 'Faculty Teacher';
+      case 'student':
+      default:
+        return 'Student';
+    }
+  };
+
   return (
     <div className="min-h-screen bg-[#F9F9F8] flex items-center justify-center p-4 sm:p-6 lg:p-8 font-sans">
       {/* Centered Notification Popup for Registration */}
@@ -206,7 +224,9 @@ export const RegisterPage: React.FC = () => {
         isOpen={showSuccessPopup}
         type="success"
         title="Account Created Successfully!"
-        message={`Welcome, ${fullName.trim()}! Your institutional student account is created and verified. Transitioning to Sign In...`}
+        message={`Welcome, ${fullName.trim()}! Your institutional ${getRoleDisplayName(
+          selectedRole
+        )} account is created and verified. Transitioning to Sign In...`}
         actionText="Proceed to Sign In"
         onAction={handleProceedToLogin}
         autoCloseMs={2800}
@@ -218,22 +238,11 @@ export const RegisterPage: React.FC = () => {
             <Logo size="md" />
           </div>
           <h1 className="text-2xl font-bold tracking-tight text-[#131313]">
-            Student Registration
+            Create Account
           </h1>
           <p className="text-xs text-[#62676B] mt-1">
-            Create your verified student account with high-grade security credentials.
+            Register your verified account to access the Admin, Teacher, or Student dashboard.
           </p>
-        </div>
-
-        {/* Institutional policy note */}
-        <div className="mb-6 p-3.5 rounded-xl bg-[#FFF2D7] border border-[#FAC95A]/70 text-xs text-[#131313] flex items-start gap-2.5">
-          <ShieldCheck className="w-4 h-4 text-[#F9A51B] shrink-0 mt-0.5" />
-          <div>
-            <p className="font-semibold">Institutional Access Policy</p>
-            <p className="text-[11px] text-[#62676B] mt-0.5 leading-relaxed">
-              Public self-registration assigns the <strong>Student</strong> role. Faculty, Department HODs, and Administrators are provisioned by the Academic Registrar.
-            </p>
-          </div>
         </div>
 
         {error && (
@@ -251,6 +260,107 @@ export const RegisterPage: React.FC = () => {
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Role Selection Tabs */}
+          <div>
+            <label className="block text-xs font-semibold text-[#131313] mb-1.5">
+              Select Account Role *
+            </label>
+            <div className="grid grid-cols-3 gap-2.5">
+              <button
+                type="button"
+                onClick={() => setSelectedRole('student')}
+                className={`p-3 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between ${
+                  selectedRole === 'student'
+                    ? 'border-[#F9A51B] bg-[#FFF2D7]/60 ring-1 ring-[#F9A51B]'
+                    : 'border-[#DBDBD9] bg-white hover:bg-[#F9F9F8]'
+                }`}
+              >
+                <div className="flex items-center justify-between w-full mb-1">
+                  <div
+                    className={`p-1.5 rounded-lg ${
+                      selectedRole === 'student'
+                        ? 'bg-[#F9A51B] text-white'
+                        : 'bg-[#F3F3F1] text-[#62676B]'
+                    }`}
+                  >
+                    <GraduationCap className="w-4 h-4" />
+                  </div>
+                  {selectedRole === 'student' && (
+                    <span className="w-2 h-2 rounded-full bg-[#F9A51B]" />
+                  )}
+                </div>
+                <div>
+                  <div className="text-xs font-bold text-[#131313]">Student</div>
+                  <div className="text-[10px] text-[#62676B] leading-tight mt-0.5">
+                    Student Dashboard
+                  </div>
+                </div>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setSelectedRole('teacher')}
+                className={`p-3 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between ${
+                  selectedRole === 'teacher'
+                    ? 'border-[#F9A51B] bg-[#FFF2D7]/60 ring-1 ring-[#F9A51B]'
+                    : 'border-[#DBDBD9] bg-white hover:bg-[#F9F9F8]'
+                }`}
+              >
+                <div className="flex items-center justify-between w-full mb-1">
+                  <div
+                    className={`p-1.5 rounded-lg ${
+                      selectedRole === 'teacher'
+                        ? 'bg-[#F9A51B] text-white'
+                        : 'bg-[#F3F3F1] text-[#62676B]'
+                    }`}
+                  >
+                    <BookOpen className="w-4 h-4" />
+                  </div>
+                  {selectedRole === 'teacher' && (
+                    <span className="w-2 h-2 rounded-full bg-[#F9A51B]" />
+                  )}
+                </div>
+                <div>
+                  <div className="text-xs font-bold text-[#131313]">Teacher</div>
+                  <div className="text-[10px] text-[#62676B] leading-tight mt-0.5">
+                    Teacher Dashboard
+                  </div>
+                </div>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setSelectedRole('admin')}
+                className={`p-3 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between ${
+                  selectedRole === 'admin'
+                    ? 'border-[#F9A51B] bg-[#FFF2D7]/60 ring-1 ring-[#F9A51B]'
+                    : 'border-[#DBDBD9] bg-white hover:bg-[#F9F9F8]'
+                }`}
+              >
+                <div className="flex items-center justify-between w-full mb-1">
+                  <div
+                    className={`p-1.5 rounded-lg ${
+                      selectedRole === 'admin'
+                        ? 'bg-[#F9A51B] text-white'
+                        : 'bg-[#F3F3F1] text-[#62676B]'
+                    }`}
+                  >
+                    <ShieldCheck className="w-4 h-4" />
+                  </div>
+                  {selectedRole === 'admin' && (
+                    <span className="w-2 h-2 rounded-full bg-[#F9A51B]" />
+                  )}
+                </div>
+                <div>
+                  <div className="text-xs font-bold text-[#131313]">Admin</div>
+                  <div className="text-[10px] text-[#62676B] leading-tight mt-0.5">
+                    Admin Dashboard
+                  </div>
+                </div>
+              </button>
+            </div>
+          </div>
+
           <div>
             <label className="block text-xs font-medium text-[#131313] mb-1.5">
               Full Legal Name *
@@ -279,7 +389,7 @@ export const RegisterPage: React.FC = () => {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="student.name@institution.edu"
+                placeholder="name@institution.edu"
                 className="w-full pl-9 pr-4 py-2.5 bg-white border border-[#DBDBD9] rounded-lg text-xs text-[#131313] placeholder-[#919A9F] focus:outline-hidden focus:border-[#F9A51B] focus:ring-1 focus:ring-[#F9A51B]"
               />
             </div>
@@ -289,7 +399,7 @@ export const RegisterPage: React.FC = () => {
           <div className="space-y-2 pt-1">
             <div className="flex items-center justify-between">
               <label className="block text-xs font-medium text-[#131313]">
-                Password *
+                Password & Confirmation *
               </label>
 
               {/* "Suggest Strong Password" Button */}
@@ -321,23 +431,34 @@ export const RegisterPage: React.FC = () => {
                     onClick={() => setShowPassword((prev) => !prev)}
                     className="p-1.5 text-[#919A9F] hover:text-[#131313] absolute right-2.5 top-1/2 -translate-y-1/2 cursor-pointer"
                     title={showPassword ? 'Hide password' : 'Show password text for safety'}
+                    aria-label={showPassword ? 'Hide password' : 'Show password'}
                   >
                     {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
                 </div>
               </div>
 
+              {/* Confirmation with interactive Eye toggle */}
               <div>
                 <div className="relative">
                   <Lock className="w-4 h-4 text-[#919A9F] absolute left-3.5 top-1/2 -translate-y-1/2" />
                   <input
-                    type={showPassword ? 'text' : 'password'}
+                    type={showConfirmPassword ? 'text' : 'password'}
                     required
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     placeholder="Confirm password"
-                    className="w-full pl-9 pr-4 py-2.5 bg-white border border-[#DBDBD9] rounded-lg text-xs text-[#131313] placeholder-[#919A9F] focus:outline-hidden focus:border-[#F9A51B] focus:ring-1 focus:ring-[#F9A51B]"
+                    className="w-full pl-9 pr-10 py-2.5 bg-white border border-[#DBDBD9] rounded-lg text-xs text-[#131313] placeholder-[#919A9F] focus:outline-hidden focus:border-[#F9A51B] focus:ring-1 focus:ring-[#F9A51B]"
                   />
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPassword((prev) => !prev)}
+                    className="p-1.5 text-[#919A9F] hover:text-[#131313] absolute right-2.5 top-1/2 -translate-y-1/2 cursor-pointer"
+                    title={showConfirmPassword ? 'Hide confirmation password' : 'Show confirmation password text'}
+                    aria-label={showConfirmPassword ? 'Hide confirmation password' : 'Show confirmation password'}
+                  >
+                    {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
                 </div>
               </div>
             </div>

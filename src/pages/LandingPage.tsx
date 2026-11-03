@@ -135,23 +135,6 @@ export const LandingPage: React.FC = () => {
                 Manage students, courses, attendance, assessments, and academic records from one organized workspace built for your institution.
               </p>
 
-              <div className="flex flex-wrap items-center gap-3 pt-2">
-                <Link
-                  to="/register"
-                  className="px-6 py-3 rounded-lg bg-[#F9A51B] hover:bg-[#E58E08] text-white font-semibold text-sm shadow-xs transition-all flex items-center gap-2"
-                >
-                  <span>Get Started</span>
-                  <ArrowRight className="w-4 h-4" />
-                </Link>
-
-                <a
-                  href="#features"
-                  className="px-6 py-3 rounded-lg bg-white border border-[#DBDBD9] hover:bg-[#F3F3F1] text-[#131313] font-medium text-sm transition-colors"
-                >
-                  Explore Features
-                </a>
-              </div>
-
               <div className="pt-2 flex items-center gap-2 text-xs text-[#62676B]">
                 <ShieldCheck className="w-4 h-4 text-[#23845B]" />
                 <span>Designed for administrators, teachers, and students.</span>

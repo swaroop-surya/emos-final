@@ -256,16 +256,21 @@ export const LoginPage: React.FC = () => {
               </button>
             </form>
 
-            <div className="text-center pt-2 border-t border-[#DBDBD9]/60">
+            <div className="text-center pt-2 border-t border-[#DBDBD9]/60 space-y-2">
               <p className="text-xs text-[#62676B]">
-                New student without an account?{' '}
+                Need an account?{' '}
                 <Link to="/register" className="font-semibold text-[#F9A51B] hover:underline">
-                  Register as Student
+                  Register for Admin, Teacher, or Student
                 </Link>
               </p>
-              <p className="text-[11px] text-[#919A9F] mt-1">
-                Faculty & Administrator access is provisioned by the Academic Registrar.
-              </p>
+              <div className="p-2.5 rounded-lg bg-[#F9F9F8] border border-[#DBDBD9]/60 text-[11px] text-[#62676B] text-left">
+                <span className="font-semibold text-[#131313] block mb-1">Sample institutional logins:</span>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-1 text-[10px]">
+                  <div><span className="font-bold text-[#131313]">Admin:</span> admin@eoms.edu</div>
+                  <div><span className="font-bold text-[#131313]">Teacher:</span> teacher@eoms.edu</div>
+                  <div><span className="font-bold text-[#131313]">Student:</span> student@eoms.edu</div>
+                </div>
+              </div>
             </div>
           </div>
         </div>

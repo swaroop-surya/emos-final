@@ -35,13 +35,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (activeSession) {
         setCurrentUser(JSON.parse(activeSession));
       } else {
-        // Default to admin for immediate convenience in AI studio preview, but can sign out or switch
-        const defaultAdmin = INITIAL_USERS[0];
-        setCurrentUser(defaultAdmin);
-        localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(defaultAdmin));
+        setCurrentUser(null);
       }
     } catch {
-      setCurrentUser(INITIAL_USERS[0]);
+      setCurrentUser(null);
     } finally {
       setIsLoading(false);
     }
@@ -114,9 +111,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       return { success: false, error: 'All fields are required.' };
     }
 
-    // Role security rule: Public self-registration only allows student role.
-    // Teacher or Admin require administrative provisioning.
-    const finalRole: UserRole = requestedRole === 'student' ? 'student' : 'student';
+    const finalRole: UserRole = requestedRole;
 
     try {
       const storedUsersRaw = localStorage.getItem(ALL_USERS_KEY);
@@ -128,17 +123,27 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         return { success: false, error: 'An account with this email address already exists.' };
       }
 
+      const randomNum = Math.floor(100 + Math.random() * 900);
+      const currentYear = new Date().getFullYear();
+
       const newUser: User = {
-        id: `usr-${Date.now()}`,
+        id: `usr-${finalRole}-${Date.now()}`,
         fullName: name.trim(),
         email: email.trim().toLowerCase(),
         role: finalRole,
         accountStatus: 'Active',
         createdAt: new Date().toISOString(),
-        studentNumber: `STU-${new Date().getFullYear()}-${Math.floor(100 + Math.random() * 900)}`,
-        className: 'B.Tech 1st Year (CSE)',
-        classId: 'cls-cse-1',
-        department: 'Computer Science & Engineering',
+        studentNumber: finalRole === 'student' ? `STU-${currentYear}-${randomNum}` : undefined,
+        employeeNumber:
+          finalRole !== 'student'
+            ? `${finalRole === 'admin' ? 'ADM' : 'FAC'}-${currentYear}-${randomNum}`
+            : undefined,
+        className: finalRole === 'student' ? 'B.Tech 1st Year (CSE)' : undefined,
+        classId: finalRole === 'student' ? 'cls-cse-1' : undefined,
+        department:
+          finalRole === 'admin'
+            ? 'Academic Administration'
+            : 'Computer Science & Engineering',
       };
 
       const updatedUsers = [...allUsers, newUser];
