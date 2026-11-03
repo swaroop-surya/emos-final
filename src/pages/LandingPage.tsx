@@ -51,31 +51,14 @@ export const LandingPage: React.FC = () => {
             </a>
           </nav>
 
-          {/* Actions */}
+          {/* Actions - Keep only Get Started */}
           <div className="hidden md:flex items-center gap-3">
-            {isAuthenticated ? (
-              <Link
-                to="/app/dashboard"
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#F9A51B] hover:bg-[#E58E08] text-white text-xs font-semibold shadow-xs transition-colors"
-              >
-                Go to Workspace <ArrowRight className="w-3.5 h-3.5" />
-              </Link>
-            ) : (
-              <>
-                <Link
-                  to="/login"
-                  className="px-4 py-2 rounded-lg text-xs font-medium text-[#131313] hover:bg-[#F3F3F1] border border-transparent transition-colors"
-                >
-                  Sign In
-                </Link>
-                <Link
-                  to="/register"
-                  className="px-4 py-2 rounded-lg bg-[#F9A51B] hover:bg-[#E58E08] text-white text-xs font-semibold shadow-xs transition-colors"
-                >
-                  Get Started
-                </Link>
-              </>
-            )}
+            <Link
+              to="/register"
+              className="px-4 py-2 rounded-lg bg-[#F9A51B] hover:bg-[#E58E08] text-white text-xs font-semibold shadow-xs transition-colors"
+            >
+              Get Started
+            </Link>
           </div>
 
           {/* Mobile hamburger button */}
@@ -121,14 +104,9 @@ export const LandingPage: React.FC = () => {
             </a>
             <div className="pt-2 border-t border-[#DBDBD9] flex flex-col gap-2">
               <Link
-                to="/login"
-                className="w-full text-center py-2 text-xs font-medium border border-[#DBDBD9] rounded-lg"
-              >
-                Sign In
-              </Link>
-              <Link
                 to="/register"
-                className="w-full text-center py-2 text-xs font-semibold bg-[#F9A51B] text-white rounded-lg"
+                onClick={() => setMobileMenuOpen(false)}
+                className="w-full text-center py-2.5 text-xs font-semibold bg-[#F9A51B] text-white rounded-lg shadow-xs"
               >
                 Get Started
               </Link>

@@ -99,7 +99,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const register = async (name: string, email: string, password: string, requestedRole: UserRole = 'student') => {
+  const register = async (
+    name: string,
+    email: string,
+    password: string,
+    requestedRole: UserRole = 'student',
+    autoLogin: boolean = false
+  ) => {
     setIsLoading(true);
     await new Promise((resolve) => setTimeout(resolve, 500));
 
@@ -137,11 +143,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       const updatedUsers = [...allUsers, newUser];
       localStorage.setItem(ALL_USERS_KEY, JSON.stringify(updatedUsers));
-      setCurrentUser(newUser);
-      localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(newUser));
+
+      if (autoLogin) {
+        setCurrentUser(newUser);
+        localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(newUser));
+      }
 
       setIsLoading(false);
-      return { success: true };
+      return { success: true, user: newUser };
     } catch {
       setIsLoading(false);
       return { success: false, error: 'Could not create account at this time.' };

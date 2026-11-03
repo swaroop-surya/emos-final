@@ -24,9 +24,10 @@ import {
 interface SidebarProps {
   isOpen: boolean;
   onClose: () => void;
+  onRequestLogout?: () => void;
 }
 
-export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
+export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, onRequestLogout }) => {
   const { currentUser, logout } = useAuth();
   const { showToast } = useToast();
   const navigate = useNavigate();
@@ -183,7 +184,14 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
             </div>
 
             <button
-              onClick={handleLogout}
+              onClick={() => {
+                onClose();
+                if (onRequestLogout) {
+                  onRequestLogout();
+                } else {
+                  handleLogout();
+                }
+              }}
               className="p-1.5 rounded-md text-[#62676B] hover:text-[#C44940] hover:bg-[#FCEBE9] transition-colors cursor-pointer shrink-0"
               title="Sign Out"
             >

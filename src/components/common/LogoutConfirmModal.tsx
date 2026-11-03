@@ -5,12 +5,14 @@ export interface LogoutConfirmModalProps {
   isOpen: boolean;
   onCancel: () => void;
   onConfirm: () => void;
+  userEmail?: string;
 }
 
 export const LogoutConfirmModal: React.FC<LogoutConfirmModalProps> = ({
   isOpen,
   onCancel,
   onConfirm,
+  userEmail,
 }) => {
   if (!isOpen) return null;
 
@@ -39,7 +41,13 @@ export const LogoutConfirmModal: React.FC<LogoutConfirmModalProps> = ({
           Confirm Sign Out
         </h3>
 
-        <p className="text-xs text-[#62676B] mt-1.5 leading-relaxed">
+        {userEmail && (
+          <p className="text-[11px] font-medium text-[#131313] bg-[#F9F9F8] border border-[#DBDBD9]/70 rounded-md py-1 px-2.5 mt-2 inline-block truncate max-w-full">
+            {userEmail}
+          </p>
+        )}
+
+        <p className="text-xs text-[#62676B] mt-2 leading-relaxed">
           Are you sure you want to end your current educational session? You will be returned to the landing page.
         </p>
 

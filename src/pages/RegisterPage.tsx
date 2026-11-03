@@ -1,23 +1,25 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { useToast } from '../context/ToastContext';
 import { Logo } from '../components/common/Logo';
+import { CenteredPopup } from '../components/common/CenteredPopup';
 import {
   User,
   Mail,
   Lock,
   Eye,
   EyeOff,
-  CheckCircle,
+  Check,
+  CheckCircle2,
   AlertCircle,
   ArrowRight,
   ShieldCheck,
+  Sparkles,
+  KeyRound,
 } from 'lucide-react';
 
 export const RegisterPage: React.FC = () => {
   const { register } = useAuth();
-  const { showToast } = useToast();
   const navigate = useNavigate();
 
   const [fullName, setFullName] = useState('');
@@ -28,22 +30,126 @@ export const RegisterPage: React.FC = () => {
   const [agreeTerms, setAgreeTerms] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [passwordNotice, setPasswordNotice] = useState<string | null>(null);
 
-  // Password strength checker
-  const getPasswordStrength = () => {
-    if (!password) return { score: 0, text: 'None', color: 'bg-gray-200' };
-    let score = 0;
-    if (password.length >= 6) score++;
-    if (/[A-Z]/.test(password)) score++;
-    if (/[0-9]/.test(password)) score++;
-    if (/[^A-Za-z0-9]/.test(password)) score++;
+  // Centered Notification Popup state
+  const [showSuccessPopup, setShowSuccessPopup] = useState(false);
+  const [registeredEmail, setRegisteredEmail] = useState('');
 
-    if (score <= 1) return { score: 1, text: 'Weak', color: 'bg-[#C44940]' };
-    if (score === 2) return { score: 2, text: 'Moderate', color: 'bg-[#A66A00]' };
-    return { score: 3, text: 'Strong', color: 'bg-[#23845B]' };
+  // 5-Criteria Checklist definitions
+  const criteria = [
+    {
+      id: 'length',
+      label: 'At least 8 characters',
+      met: password.length >= 8,
+    },
+    {
+      id: 'uppercase',
+      label: 'At least one uppercase letter (A-Z)',
+      met: /[A-Z]/.test(password),
+    },
+    {
+      id: 'lowercase',
+      label: 'At least one lowercase letter (a-z)',
+      met: /[a-z]/.test(password),
+    },
+    {
+      id: 'number',
+      label: 'At least one number (0-9)',
+      met: /[0-9]/.test(password),
+    },
+    {
+      id: 'special',
+      label: 'At least one special symbol (!@#$%^&*)',
+      met: /[!@#$%^&*]/.test(password),
+    },
+  ];
+
+  const metCount = criteria.filter((c) => c.met).length;
+  const isAllCriteriaMet = metCount === 5;
+
+  // Real-time visual indicator displaying Weak, Moderate, or Strong & Verified status
+  const getStrengthMeter = () => {
+    if (!password) {
+      return {
+        label: 'Not Entered',
+        percentage: 0,
+        barColor: 'bg-neutral-200',
+        textColor: 'text-[#919A9F]',
+        badgeBg: 'bg-[#F3F3F1]',
+        isStrong: false,
+      };
+    }
+    if (metCount <= 2) {
+      return {
+        label: 'Weak',
+        percentage: Math.max(20, metCount * 20),
+        barColor: 'bg-[#C44940]',
+        textColor: 'text-[#C44940]',
+        badgeBg: 'bg-[#FCEBE9]',
+        isStrong: false,
+      };
+    }
+    if (metCount <= 4) {
+      return {
+        label: 'Moderate',
+        percentage: metCount * 20,
+        barColor: 'bg-[#A66A00]',
+        textColor: 'text-[#A66A00]',
+        badgeBg: 'bg-[#FFF3D6]',
+        isStrong: false,
+      };
+    }
+    return {
+      label: 'Strong & Verified',
+      percentage: 100,
+      barColor: 'bg-[#23845B]',
+      textColor: 'text-[#23845B]',
+      badgeBg: 'bg-[#E6F4EC]',
+      isStrong: true,
+    };
   };
 
-  const strength = getPasswordStrength();
+  const strength = getStrengthMeter();
+
+  // "Suggest Strong Password" Generator
+  const handleSuggestPassword = () => {
+    const uppers = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
+    const lowers = 'abcdefghijkmnopqrstuvwxyz';
+    const numbers = '23456789';
+    const specials = '!@#$%^&*';
+
+    // Guarantee 2 of each required category
+    const generated: string[] = [
+      uppers[Math.floor(Math.random() * uppers.length)],
+      uppers[Math.floor(Math.random() * uppers.length)],
+      lowers[Math.floor(Math.random() * lowers.length)],
+      lowers[Math.floor(Math.random() * lowers.length)],
+      numbers[Math.floor(Math.random() * numbers.length)],
+      numbers[Math.floor(Math.random() * numbers.length)],
+      specials[Math.floor(Math.random() * specials.length)],
+      specials[Math.floor(Math.random() * specials.length)],
+    ];
+
+    const allChars = uppers + lowers + numbers + specials;
+    while (generated.length < 15) {
+      generated.push(allChars[Math.floor(Math.random() * allChars.length)]);
+    }
+
+    // Shuffle characters
+    for (let i = generated.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [generated[i], generated[j]] = [generated[j], generated[i]];
+    }
+
+    const securePass = generated.join('');
+    setPassword(securePass);
+    setConfirmPassword(securePass);
+    setShowPassword(true); // reveals text for safety
+    setError(null);
+    setPasswordNotice('Secure high-entropy password generated and applied!');
+    setTimeout(() => setPasswordNotice(null), 4000);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -54,15 +160,15 @@ export const RegisterPage: React.FC = () => {
       return;
     }
     if (!email.trim() || !email.includes('@')) {
-      setError('Please provide a valid educational or personal email.');
+      setError('Please provide a valid educational or personal email address.');
       return;
     }
-    if (password.length < 6) {
-      setError('Password must be at least 6 characters long.');
+    if (!isAllCriteriaMet) {
+      setError('Password must satisfy all 5 verification criteria before registering.');
       return;
     }
     if (password !== confirmPassword) {
-      setError('Passwords do not match.');
+      setError('Passwords do not match. Please ensure both fields are identical.');
       return;
     }
     if (!agreeTerms) {
@@ -71,24 +177,41 @@ export const RegisterPage: React.FC = () => {
     }
 
     setIsLoading(true);
-    // Public registration securely enforces Student role as per security policy
-    const res = await register(fullName, email, password, 'student');
+    // AutoLogin is false for post-registration transition to login
+    const res = await register(fullName, email, password, 'student', false);
     setIsLoading(false);
 
     if (res.success) {
-      showToast({
-        type: 'success',
-        title: 'Registration Successful!',
-        message: `Welcome to EOMS, ${fullName.trim()}! Your student workspace is ready.`,
-      });
-      navigate('/app/dashboard');
+      setRegisteredEmail(email.trim());
+      setShowSuccessPopup(true);
     } else {
       setError(res.error || 'Registration failed.');
     }
   };
 
+  const handleProceedToLogin = () => {
+    setShowSuccessPopup(false);
+    navigate('/login', {
+      state: {
+        email: registeredEmail,
+        registeredSuccess: true,
+      },
+    });
+  };
+
   return (
-    <div className="min-h-screen bg-[#F9F9F8] flex items-center justify-center p-4 sm:p-6 lg:p-8">
+    <div className="min-h-screen bg-[#F9F9F8] flex items-center justify-center p-4 sm:p-6 lg:p-8 font-sans">
+      {/* Centered Notification Popup for Registration */}
+      <CenteredPopup
+        isOpen={showSuccessPopup}
+        type="success"
+        title="Account Created Successfully!"
+        message={`Welcome, ${fullName.trim()}! Your institutional student account is created and verified. Transitioning to Sign In...`}
+        actionText="Proceed to Sign In"
+        onAction={handleProceedToLogin}
+        autoCloseMs={2800}
+      />
+
       <div className="w-full max-w-xl bg-white rounded-2xl border border-[#DBDBD9] shadow-sm p-6 sm:p-10">
         <div className="text-center mb-6">
           <div className="inline-block mb-3">
@@ -98,17 +221,17 @@ export const RegisterPage: React.FC = () => {
             Student Registration
           </h1>
           <p className="text-xs text-[#62676B] mt-1">
-            Create your institutional account to access your courses, attendance, and grades.
+            Create your verified student account with high-grade security credentials.
           </p>
         </div>
 
-        {/* Role Policy Notice as required by Master Prompt Section 8 */}
+        {/* Institutional policy note */}
         <div className="mb-6 p-3.5 rounded-xl bg-[#FFF2D7] border border-[#FAC95A]/70 text-xs text-[#131313] flex items-start gap-2.5">
           <ShieldCheck className="w-4 h-4 text-[#F9A51B] shrink-0 mt-0.5" />
           <div>
             <p className="font-semibold">Institutional Access Policy</p>
             <p className="text-[11px] text-[#62676B] mt-0.5 leading-relaxed">
-              Public self-registration assigns the <strong>Student</strong> role. Faculty, Department HODs, and Administrators must be provisioned directly by the Academic Registrar.
+              Public self-registration assigns the <strong>Student</strong> role. Faculty, Department HODs, and Administrators are provisioned by the Academic Registrar.
             </p>
           </div>
         </div>
@@ -120,10 +243,17 @@ export const RegisterPage: React.FC = () => {
           </div>
         )}
 
+        {passwordNotice && (
+          <div className="mb-4 p-3 rounded-lg bg-[#E6F4EC] border border-[#23845B]/30 text-[#23845B] text-xs flex items-center gap-2">
+            <CheckCircle2 className="w-4 h-4 shrink-0" />
+            <span>{passwordNotice}</span>
+          </div>
+        )}
+
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-xs font-medium text-[#131313] mb-1.5">
-              Full Name
+              Full Legal Name *
             </label>
             <div className="relative">
               <User className="w-4 h-4 text-[#919A9F] absolute left-3.5 top-1/2 -translate-y-1/2" />
@@ -140,7 +270,7 @@ export const RegisterPage: React.FC = () => {
 
           <div>
             <label className="block text-xs font-medium text-[#131313] mb-1.5">
-              Email Address
+              Institutional or Personal Email Address *
             </label>
             <div className="relative">
               <Mail className="w-4 h-4 text-[#919A9F] absolute left-3.5 top-1/2 -translate-y-1/2" />
@@ -155,77 +285,112 @@ export const RegisterPage: React.FC = () => {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-xs font-medium text-[#131313] mb-1.5">
-                Password
+          {/* Password Section with Suggest Strong Password Header */}
+          <div className="space-y-2 pt-1">
+            <div className="flex items-center justify-between">
+              <label className="block text-xs font-medium text-[#131313]">
+                Password *
               </label>
-              <div className="relative">
-                <Lock className="w-4 h-4 text-[#919A9F] absolute left-3.5 top-1/2 -translate-y-1/2" />
-                <input
-                  type={showPassword ? 'text' : 'password'}
-                  required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Min 6 characters"
-                  className="w-full pl-9 pr-10 py-2.5 bg-white border border-[#DBDBD9] rounded-lg text-xs text-[#131313] placeholder-[#919A9F] focus:outline-hidden focus:border-[#F9A51B] focus:ring-1 focus:ring-[#F9A51B]"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword((prev) => !prev)}
-                  className="p-1.5 text-[#919A9F] hover:text-[#131313] absolute right-2.5 top-1/2 -translate-y-1/2 cursor-pointer"
-                >
-                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                </button>
+
+              {/* "Suggest Strong Password" Button */}
+              <button
+                type="button"
+                onClick={handleSuggestPassword}
+                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-semibold bg-[#FFF2D7] text-[#131313] hover:bg-[#F9A51B] hover:text-white border border-[#FAC95A] transition-colors cursor-pointer"
+                title="Generate a secure high-entropy password that meets all 5 criteria"
+              >
+                <Sparkles className="w-3.5 h-3.5 text-[#E58E08]" />
+                <span>Suggest Strong Password</span>
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <div className="relative">
+                  <Lock className="w-4 h-4 text-[#919A9F] absolute left-3.5 top-1/2 -translate-y-1/2" />
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    required
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="Enter password"
+                    className="w-full pl-9 pr-10 py-2.5 bg-white border border-[#DBDBD9] rounded-lg text-xs text-[#131313] placeholder-[#919A9F] focus:outline-hidden focus:border-[#F9A51B] focus:ring-1 focus:ring-[#F9A51B]"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((prev) => !prev)}
+                    className="p-1.5 text-[#919A9F] hover:text-[#131313] absolute right-2.5 top-1/2 -translate-y-1/2 cursor-pointer"
+                    title={showPassword ? 'Hide password' : 'Show password text for safety'}
+                  >
+                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                </div>
+              </div>
+
+              <div>
+                <div className="relative">
+                  <Lock className="w-4 h-4 text-[#919A9F] absolute left-3.5 top-1/2 -translate-y-1/2" />
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    required
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    placeholder="Confirm password"
+                    className="w-full pl-9 pr-4 py-2.5 bg-white border border-[#DBDBD9] rounded-lg text-xs text-[#131313] placeholder-[#919A9F] focus:outline-hidden focus:border-[#F9A51B] focus:ring-1 focus:ring-[#F9A51B]"
+                  />
+                </div>
               </div>
             </div>
 
-            <div>
-              <label className="block text-xs font-medium text-[#131313] mb-1.5">
-                Confirm Password
-              </label>
-              <div className="relative">
-                <Lock className="w-4 h-4 text-[#919A9F] absolute left-3.5 top-1/2 -translate-y-1/2" />
-                <input
-                  type={showPassword ? 'text' : 'password'}
-                  required
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  placeholder="Re-enter password"
-                  className="w-full pl-9 pr-4 py-2.5 bg-white border border-[#DBDBD9] rounded-lg text-xs text-[#131313] placeholder-[#919A9F] focus:outline-hidden focus:border-[#F9A51B] focus:ring-1 focus:ring-[#F9A51B]"
+            {/* Password Strength Meter */}
+            <div className="mt-3 p-3 bg-[#F9F9F8] rounded-xl border border-[#DBDBD9] space-y-2">
+              <div className="flex items-center justify-between text-xs">
+                <span className="text-[#62676B] font-medium">Password Strength:</span>
+                <span
+                  className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold ${strength.badgeBg} ${strength.textColor}`}
+                >
+                  {strength.isStrong && <CheckCircle2 className="w-3.5 h-3.5" />}
+                  <span>{strength.label}</span>
+                </span>
+              </div>
+
+              {/* Progress meter bar */}
+              <div className="h-2 w-full bg-[#E5E5E3] rounded-full overflow-hidden">
+                <div
+                  className={`h-full rounded-full transition-all duration-300 ${strength.barColor}`}
+                  style={{ width: `${strength.percentage}%` }}
                 />
+              </div>
+
+              {/* Live 5-Criteria Verification Checklist */}
+              <div className="pt-2 border-t border-[#DBDBD9]/60">
+                <span className="text-[10px] uppercase tracking-wider font-bold text-[#919A9F] block mb-1.5">
+                  Live 5-Criteria Verification Checklist:
+                </span>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 text-[11px]">
+                  {criteria.map((item) => (
+                    <div
+                      key={item.id}
+                      className={`flex items-center gap-1.5 transition-colors ${
+                        item.met ? 'text-[#23845B] font-medium' : 'text-[#919A9F]'
+                      }`}
+                    >
+                      <div
+                        className={`w-4 h-4 rounded-full flex items-center justify-center shrink-0 text-[10px] ${
+                          item.met
+                            ? 'bg-[#E6F4EC] text-[#23845B] border border-[#23845B]/30'
+                            : 'bg-[#F3F3F1] text-[#919A9F] border border-[#DBDBD9]'
+                        }`}
+                      >
+                        {item.met ? <Check className="w-2.5 h-2.5 stroke-[3]" /> : '•'}
+                      </div>
+                      <span>{item.label}</span>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
-
-          {/* Password strength bar */}
-          {password && (
-            <div className="space-y-1">
-              <div className="flex justify-between text-[11px] text-[#62676B]">
-                <span>Password strength: <strong>{strength.text}</strong></span>
-              </div>
-              <div className="h-1.5 w-full bg-[#F3F3F1] rounded-full overflow-hidden flex gap-1">
-                <div
-                  className={`h-full rounded-full transition-all ${
-                    strength.score >= 1 ? strength.color : 'bg-transparent'
-                  }`}
-                  style={{ width: '33%' }}
-                />
-                <div
-                  className={`h-full rounded-full transition-all ${
-                    strength.score >= 2 ? strength.color : 'bg-transparent'
-                  }`}
-                  style={{ width: '33%' }}
-                />
-                <div
-                  className={`h-full rounded-full transition-all ${
-                    strength.score >= 3 ? strength.color : 'bg-transparent'
-                  }`}
-                  style={{ width: '34%' }}
-                />
-              </div>
-            </div>
-          )}
 
           <div className="pt-2">
             <label className="flex items-start cursor-pointer">
@@ -244,7 +409,7 @@ export const RegisterPage: React.FC = () => {
 
           <button
             type="submit"
-            disabled={isLoading}
+            disabled={isLoading || !isAllCriteriaMet}
             className="w-full py-2.5 px-4 rounded-lg bg-[#F9A51B] hover:bg-[#E58E08] text-white text-xs font-semibold shadow-xs transition-colors flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 mt-4"
           >
             {isLoading ? (

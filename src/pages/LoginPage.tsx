@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import { Logo } from '../components/common/Logo';
-import { UserRole } from '../types';
+import { CenteredPopup } from '../components/common/CenteredPopup';
 import {
   Mail,
   Lock,
@@ -11,13 +11,12 @@ import {
   EyeOff,
   ArrowRight,
   ShieldCheck,
-  GraduationCap,
-  BookOpen,
   AlertCircle,
+  CheckCircle2,
 } from 'lucide-react';
 
 export const LoginPage: React.FC = () => {
-  const { login } = useAuth();
+  const { login, currentUser } = useAuth();
   const { showToast } = useToast();
   const navigate = useNavigate();
   const location = useLocation();
@@ -28,6 +27,19 @@ export const LoginPage: React.FC = () => {
   const [rememberMe, setRememberMe] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [showSuccessPopup, setShowSuccessPopup] = useState(false);
+  const [registeredBanner, setRegisteredBanner] = useState(false);
+
+  // Read email from post-registration transition
+  useEffect(() => {
+    const state = location.state as { email?: string; registeredSuccess?: boolean } | null;
+    if (state?.email) {
+      setEmail(state.email);
+    }
+    if (state?.registeredSuccess) {
+      setRegisteredBanner(true);
+    }
+  }, [location.state]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -47,35 +59,31 @@ export const LoginPage: React.FC = () => {
     setIsLoading(false);
 
     if (res.success) {
-      showToast({
-        type: 'success',
-        title: 'Logged In Successfully!',
-        message: 'Welcome back to your EOMS workspace.',
-      });
-      const from = (location.state as any)?.from?.pathname || '/app/dashboard';
-      navigate(from, { replace: true });
+      setShowSuccessPopup(true);
     } else {
       setError(res.error || 'Authentication failed. Please verify credentials.');
     }
   };
 
-  // Quick 1-click test helpers to fill credentials
-  const fillDemoCredentials = (role: UserRole) => {
-    setError(null);
-    if (role === 'admin') {
-      setEmail('admin@eoms.edu');
-      setPassword('admin123');
-    } else if (role === 'teacher') {
-      setEmail('teacher@eoms.edu');
-      setPassword('teacher123');
-    } else {
-      setEmail('student@eoms.edu');
-      setPassword('student123');
-    }
+  const handleProceedToDashboard = () => {
+    setShowSuccessPopup(false);
+    const from = (location.state as any)?.from?.pathname || '/app/dashboard';
+    navigate(from, { replace: true });
   };
 
   return (
     <div className="min-h-screen bg-[#F9F9F8] flex items-center justify-center p-4 sm:p-6 lg:p-8">
+      {/* Centered Notification Popup for Sign-In */}
+      <CenteredPopup
+        isOpen={showSuccessPopup}
+        type="success"
+        title="Signed In Successfully!"
+        message="Welcome back to your EOMS workspace! Opening your academic dashboard..."
+        actionText="Go to Dashboard"
+        onAction={handleProceedToDashboard}
+        autoCloseMs={1400}
+      />
+
       {/* 2-Panel Desktop Container matching reference Screenshot 1 */}
       <div className="w-full max-w-5xl bg-white rounded-2xl border border-[#DBDBD9] shadow-sm overflow-hidden grid grid-cols-1 lg:grid-cols-12 min-h-[580px]">
         {/* Left Panel: Warm Educational Brand Preview */}
@@ -119,7 +127,7 @@ export const LoginPage: React.FC = () => {
               </div>
             </div>
             <p className="text-[10px] text-[#919A9F] text-center">
-              Multi-role access enforcement active
+              Role-based workspace clearance active
             </p>
           </div>
 
@@ -143,38 +151,18 @@ export const LoginPage: React.FC = () => {
               </p>
             </div>
 
-            {/* Quick Demo Pre-fill Pill Buttons */}
-            <div className="p-3 bg-[#F9F9F8] rounded-xl border border-[#DBDBD9] space-y-2">
-              <span className="text-[11px] font-semibold text-[#62676B] block">
-                Quick Test Credentials:
-              </span>
-              <div className="grid grid-cols-3 gap-2">
-                <button
-                  type="button"
-                  onClick={() => fillDemoCredentials('admin')}
-                  className="px-2 py-1.5 rounded-lg bg-white hover:bg-[#FFF2D7] text-[#131313] text-xs font-medium border border-[#DBDBD9] flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
-                >
-                  <ShieldCheck className="w-3.5 h-3.5 text-[#F9A51B]" />
-                  <span>Admin</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => fillDemoCredentials('teacher')}
-                  className="px-2 py-1.5 rounded-lg bg-white hover:bg-[#FFF2D7] text-[#131313] text-xs font-medium border border-[#DBDBD9] flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
-                >
-                  <BookOpen className="w-3.5 h-3.5 text-[#F9A51B]" />
-                  <span>Teacher</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => fillDemoCredentials('student')}
-                  className="px-2 py-1.5 rounded-lg bg-white hover:bg-[#FFF2D7] text-[#131313] text-xs font-medium border border-[#DBDBD9] flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
-                >
-                  <GraduationCap className="w-3.5 h-3.5 text-[#F9A51B]" />
-                  <span>Student</span>
-                </button>
+            {/* Post-Registration Notice if transitioned from Register */}
+            {registeredBanner && (
+              <div className="p-3.5 rounded-xl bg-[#E6F4EC] border border-[#23845B]/30 text-[#23845B] text-xs flex items-start gap-2.5">
+                <CheckCircle2 className="w-4 h-4 shrink-0 mt-0.5" />
+                <div>
+                  <p className="font-semibold">Account Created Successfully!</p>
+                  <p className="text-[11px] text-[#62676B] mt-0.5">
+                    Your institutional account is registered. Please enter your password to sign in.
+                  </p>
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Error Message */}
             {error && (

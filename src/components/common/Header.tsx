@@ -19,9 +19,10 @@ import {
 
 interface HeaderProps {
   onOpenSidebar: () => void;
+  onRequestLogout?: () => void;
 }
 
-export const Header: React.FC<HeaderProps> = ({ onOpenSidebar }) => {
+export const Header: React.FC<HeaderProps> = ({ onOpenSidebar, onRequestLogout }) => {
   const { currentUser, logout } = useAuth();
   const { notifications, markNotificationRead, markAllNotificationsRead } = useData();
   const { showToast } = useToast();
@@ -268,13 +269,17 @@ export const Header: React.FC<HeaderProps> = ({ onOpenSidebar }) => {
               <button
                 onClick={() => {
                   setShowUserMenu(false);
-                  navigate('/', { replace: true });
-                  logout();
-                  showToast({
-                    type: 'success',
-                    title: 'Signed Out Successfully',
-                    message: 'You have been safely signed out.',
-                  });
+                  if (onRequestLogout) {
+                    onRequestLogout();
+                  } else {
+                    navigate('/', { replace: true });
+                    logout();
+                    showToast({
+                      type: 'success',
+                      title: 'Signed Out Successfully',
+                      message: 'You have been safely signed out.',
+                    });
+                  }
                 }}
                 className="w-full px-3 py-2 text-left hover:bg-[#FCEBE9] flex items-center gap-2 text-[#C44940] cursor-pointer"
               >

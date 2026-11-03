@@ -1,15 +1,19 @@
 import React, { useState } from 'react';
-import { Outlet, Navigate, useLocation, Link } from 'react-router-dom';
+import { Outlet, Navigate, useLocation, Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { useToast } from '../../context/ToastContext';
 import { Sidebar } from '../common/Sidebar';
 import { Header } from '../common/Header';
-import { DemoSwitcherBar } from '../common/DemoSwitcherBar';
+import { LogoutConfirmModal } from '../common/LogoutConfirmModal';
 import { ShieldAlert, ArrowLeft } from 'lucide-react';
 
 export const AppLayout: React.FC = () => {
-  const { isAuthenticated, currentUser, isLoading } = useAuth();
+  const { isAuthenticated, currentUser, isLoading, logout } = useAuth();
+  const { showToast } = useToast();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
 
   if (isLoading) {
     return (
@@ -25,6 +29,17 @@ export const AppLayout: React.FC = () => {
   if (!isAuthenticated || !currentUser) {
     return <Navigate to="/" replace />;
   }
+
+  const handleConfirmLogout = () => {
+    setIsLogoutModalOpen(false);
+    navigate('/', { replace: true });
+    logout();
+    showToast({
+      type: 'success',
+      title: 'Signed Out Successfully',
+      message: 'You have been safely signed out. Redirected to landing page.',
+    });
+  };
 
   // Role Access Guard checking
   const path = location.pathname;
@@ -68,22 +83,34 @@ export const AppLayout: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[#F9F9F8] flex flex-col font-sans">
-      {/* Top Demo Bar */}
-      <DemoSwitcherBar />
-
       <div className="flex-1 flex overflow-hidden">
         {/* Navigation Sidebar */}
-        <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+        <Sidebar
+          isOpen={sidebarOpen}
+          onClose={() => setSidebarOpen(false)}
+          onRequestLogout={() => setIsLogoutModalOpen(true)}
+        />
 
         {/* Main Content Area */}
         <div className="flex-1 flex flex-col min-w-0 lg:pl-64">
-          <Header onOpenSidebar={() => setSidebarOpen(true)} />
+          <Header
+            onOpenSidebar={() => setSidebarOpen(true)}
+            onRequestLogout={() => setIsLogoutModalOpen(true)}
+          />
 
           <main className="flex-1 p-4 sm:p-6 lg:p-8 max-w-[1440px] w-full mx-auto">
             <Outlet />
           </main>
         </div>
       </div>
+
+      {/* Centered Logout Confirmation Modal */}
+      <LogoutConfirmModal
+        isOpen={isLogoutModalOpen}
+        onCancel={() => setIsLogoutModalOpen(false)}
+        onConfirm={handleConfirmLogout}
+        userEmail={currentUser.email}
+      />
     </div>
   );
 };
