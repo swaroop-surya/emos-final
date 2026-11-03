@@ -7,7 +7,7 @@ interface AuthContextType {
   isAuthenticated: boolean;
   isLoading: boolean;
   login: (email: string, password: string, roleHint?: UserRole) => Promise<{ success: boolean; error?: string }>;
-  register: (name: string, email: string, password: string, role?: UserRole) => Promise<{ success: boolean; error?: string }>;
+  register: (name: string, email: string, password: string, role?: UserRole, autoLogin?: boolean) => Promise<{ success: boolean; error?: string; user?: User }>;
   logout: () => void;
   switchDemoRole: (role: UserRole) => void;
   updateProfile: (data: Partial<User>) => void;
