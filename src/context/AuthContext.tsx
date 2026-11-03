@@ -20,27 +20,26 @@ const AUTH_STORAGE_KEY = 'eoms_auth_user_session';
 const ALL_USERS_KEY = 'eoms_institution_users';
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [currentUser, setCurrentUser] = useState<User | null>(() => {
+    try {
+      if (typeof window === 'undefined') return null;
+      const activeSession = localStorage.getItem(AUTH_STORAGE_KEY);
+      return activeSession ? JSON.parse(activeSession) : null;
+    } catch {
+      return null;
+    }
+  });
+  const [isLoading, setIsLoading] = useState(false);
 
-  // Initialize users and current session
+  // Initialize users and seed directory if not present
   useEffect(() => {
     try {
       const storedUsers = localStorage.getItem(ALL_USERS_KEY);
       if (!storedUsers) {
         localStorage.setItem(ALL_USERS_KEY, JSON.stringify(INITIAL_USERS));
       }
-
-      const activeSession = localStorage.getItem(AUTH_STORAGE_KEY);
-      if (activeSession) {
-        setCurrentUser(JSON.parse(activeSession));
-      } else {
-        setCurrentUser(null);
-      }
     } catch {
-      setCurrentUser(null);
-    } finally {
-      setIsLoading(false);
+      // Storage unavailable or quota exceeded
     }
   }, []);
 

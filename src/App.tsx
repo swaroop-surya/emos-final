@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, Link } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { DataProvider } from './context/DataContext';
 import { ToastProvider } from './context/ToastContext';
@@ -39,12 +39,12 @@ const NotFoundPage = () => (
       <p className="text-xs text-[#62676B] mb-6">
         The requested academic route or record does not exist on this institutional server.
       </p>
-      <a
-        href="/"
+      <Link
+        to="/"
         className="inline-flex px-4 py-2 rounded-lg bg-[#F9A51B] hover:bg-[#E58E08] text-white text-xs font-semibold shadow-xs transition-colors"
       >
         Return to Home
-      </a>
+      </Link>
     </div>
   </div>
 );
